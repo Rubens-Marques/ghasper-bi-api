@@ -6,7 +6,9 @@ from src.ghasper_bi.powerbi.client import PowerBIClient
 
 load_dotenv()
 
-API_KEY = os.getenv("API_KEY", "dev-key-insecure")
+API_KEY = os.getenv("API_KEY")
+if not API_KEY:
+    raise RuntimeError("API_KEY não configurada. Copie .env.example para .env e defina API_KEY.")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 powerbi_client = PowerBIClient(
@@ -23,7 +25,7 @@ app = FastAPI(title="Ghasper BI API", version="2.0.0")
 def require_api_key(key: str = Security(api_key_header)):
     if key != API_KEY:
         raise HTTPException(status_code=401, detail="API key inválida")
-    return key
+    return None
 
 
 @app.get("/health")

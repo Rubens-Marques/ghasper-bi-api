@@ -1,3 +1,4 @@
+import time
 import httpx
 
 
@@ -19,6 +20,10 @@ class PowerBIClient:
         self.workspace_id = workspace_id
         self.dataset_id = dataset_id
         self._token: str | None = None
+        self._token_expires_at: float = 0.0
+
+    def _is_token_valid(self) -> bool:
+        return self._token is not None and time.time() < self._token_expires_at
 
     async def get_token(self) -> str:
         url = self.TOKEN_URL.format(tenant_id=self.tenant_id)
@@ -31,11 +36,13 @@ class PowerBIClient:
         async with httpx.AsyncClient() as client:
             response = await client.post(url, data=data)
             response.raise_for_status()
-        self._token = response.json()["access_token"]
+        payload = response.json()
+        self._token = payload["access_token"]
+        self._token_expires_at = time.time() + payload.get("expires_in", 3600) - 60
         return self._token
 
     async def trigger_refresh(self) -> bool:
-        if not self._token:
+        if not self._is_token_valid():
             await self.get_token()
         url = f"{self.BASE_URL}/groups/{self.workspace_id}/datasets/{self.dataset_id}/refreshes"
         headers = {"Authorization": f"Bearer {self._token}"}

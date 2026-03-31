@@ -9,7 +9,7 @@
 
 ## Sobre
 
-API de automação que substitui o processo manual de atualização e envio de relatórios Power BI. Conecta-se à API do Power BI, dispara refreshes de datasets, processa os dados e envia relatórios por email — tudo de forma agendada e configurável.
+API de automação que substitui o processo manual de atualização de datasets Power BI. Conecta-se à API do Power BI via OAuth2 e dispara refreshes sob demanda ou via scheduler externo (N8N/cron).
 
 **Problema resolvido:** Equipes que dependem de relatórios Power BI atualizados precisavam atualizar manualmente todos os dias. Esta API automatiza esse fluxo completamente.
 
@@ -31,9 +31,8 @@ API de automação que substitui o processo manual de atualização e envio de r
 ## Stack
 
 - **Python 3.11+** + **FastAPI** — API REST
-- **Power BI REST API** — refresh de datasets e exportação
-- **MySQL** — fonte de dados
-- **APScheduler** — agendamento interno
+- **Power BI REST API** — refresh de datasets via OAuth2
+- **APScheduler** — agendamento interno (roadmap)
 - **N8N** — orquestração externa (opcional)
 
 ## Instalação

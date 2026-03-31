@@ -1,3 +1,6 @@
+import os
+os.environ.setdefault("API_KEY", "test-key-for-tests")
+
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import AsyncMock, patch
@@ -31,3 +34,13 @@ def test_trigger_refresh_with_auth():
         response = client.post("/refresh", headers=auth_header())
     assert response.status_code == 200
     assert response.json()["status"] == "refresh_triggered"
+
+
+def test_trigger_refresh_returns_502_on_failure():
+    with patch(
+        "src.ghasper_bi.main.powerbi_client.trigger_refresh",
+        new_callable=AsyncMock,
+        return_value=False,
+    ):
+        response = client.post("/refresh", headers=auth_header())
+    assert response.status_code == 502
