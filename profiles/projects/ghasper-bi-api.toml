@@ -1,0 +1,20 @@
+# Fail-closed: any match marks every component affected.
+global_paths = [
+    "requirements.txt",
+    "pytest.ini",
+    "profiles/**",
+    ".github/workflows/nexus-quality-gate.yml",
+    "scripts/nexus_quality_gate.py",
+  ]
+
+[project]
+id = "ghasper-bi-api"
+repository = "Rubens-Marques/ghasper-bi-api"
+
+[components.app]
+paths = [
+    "src/**",
+    "tests/**",
+  ]
+checks = ["gate-contract", "trivy"]
+images = []
